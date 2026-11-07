@@ -1,0 +1,18 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      RAG_ADMIN_KEY: ${RAG_ADMIN_KEY:?set RAG_ADMIN_KEY in .env}
+      RAG_LLM_PROVIDER: ${RAG_LLM_PROVIDER:-extractive}   # extractive | anthropic | openai
+      RAG_LLM_API_KEY: ${RAG_LLM_API_KEY:-}
+      RAG_LLM_MODEL: ${RAG_LLM_MODEL:-claude-sonnet-5-5}
+    volumes: ["ragdata:/data"]
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    volumes: ["./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+    depends_on: [api]
+volumes:
+  ragdata:

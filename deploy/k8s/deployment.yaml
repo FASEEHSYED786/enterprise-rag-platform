@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+  labels: {app: rag-api}
+spec:
+  replicas: 1   # SQLite store is single-writer; scale out after moving to the Postgres/pgvector store
+  selector:
+    matchLabels: {app: rag-api}
+  template:
+    metadata:
+      labels: {app: rag-api}
+      annotations: {prometheus.io/scrape: "true", prometheus.io/port: "8000", prometheus.io/path: /metrics}
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: api
+          image: ghcr.io/faseehsyed786/enterprise-rag-platform:1.0.0
+          ports: [{containerPort: 8000}]
+          envFrom: [{secretRef: {name: rag-secrets}}]   # RAG_ADMIN_KEY, RAG_LLM_API_KEY
+          env:
+            - {name: RAG_LLM_PROVIDER, value: anthropic}
+            - {name: RAG_DB_PATH, value: /data/ragplatform.db}
+          readinessProbe: {httpGet: {path: /healthz, port: 8000}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /healthz, port: 8000}, initialDelaySeconds: 10, periodSeconds: 20}
+          resources:
+            requests: {cpu: 250m, memory: 256Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true}
+          volumeMounts: [{name: data, mountPath: /data}]
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: rag-data}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: rag-api}
+spec:
+  selector: {app: rag-api}
+  ports: [{port: 80, targetPort: 8000}]

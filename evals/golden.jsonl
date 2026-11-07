@@ -1,0 +1,10 @@
+{"question": "How many days of annual leave do full-time employees get?", "expected_doc": "hr_policy.md", "must_contain": ["25"]}
+{"question": "How long must passwords be and how often are they rotated?", "expected_doc": "it_security.md", "must_contain": ["ninety"]}
+{"question": "When must expense claims be submitted?", "expected_doc": "finance.md", "must_contain": ["thirty"]}
+{"question": "Is a fit note needed for sickness absence?", "expected_doc": "hr_policy.md", "must_contain": ["seven"]}
+{"question": "How quickly must security incidents be reported?", "expected_doc": "it_security.md", "must_contain": ["hour"]}
+{"question": "What is the maximum hotel cost per night?", "expected_doc": "finance.md", "must_contain": ["hundred"]}
+{"question": "When do I need a purchase order for suppliers?", "expected_doc": "finance.md", "must_contain": ["two thousand"]}
+{"question": "Can staff work remotely?", "expected_doc": "hr_policy.md", "must_contain": ["three days"]}
+{"question": "What is the airspeed velocity of an unladen swallow?", "expected_doc": null, "must_contain": []}
+{"question": "Who won the football world cup in 2018?", "expected_doc": null, "must_contain": []}
